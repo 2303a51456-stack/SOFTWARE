@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LMS Design - Behavioral Patterns</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .section {
+      border: 1px solid #aaa;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    .section h2 {
+      margin-top: 0;
+      color: #003366;
+    }
+    .log {
+      background: #f4f4f4;
+      padding: 10px;
+      height: 150px;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Observer Pattern -->
+  <div class="section">
+    <h2>📢 Observer Pattern - Student Notifications</h2>
+    <input type="text" id="studentName" placeholder="Enter student name" />
+    <button onclick="subscribeStudent()">Subscribe</button>
+    <br><br>
+    <input type="text" id="assignment" placeholder="New Assignment Title" />
+    <button onclick="publishAssignment()">Publish Assignment</button>
+    <div class="log" id="notificationLog"></div>
+  </div>
+
+  <!-- Strategy Pattern -->
+  <div class="section">
+    <h2>🎯 Strategy Pattern - Grading System</h2>
+    <label for="gradingStrategy">Choose Grading Strategy:</label>
+    <select id="gradingStrategy">
+      <option value="percentage">Percentage</option>
+      <option value="cgpa">CGPA</option>
+      <option value="passfail">Pass/Fail</option>
+    </select>
+    <br><br>
+    <input type="number" id="scoreInput" placeholder="Enter score" />
+    <button onclick="calculateGrade()">Get Grade</button>
+    <div class="log" id="gradeLog"></div>
+  </div>
+
+  <!-- Command Pattern -->
+  <div class="section">
+    <h2>🛠️ Command Pattern - Course Actions</h2>
+    <input type="text" id="commandStudent" placeholder="Student Name" />
+    <input type="text" id="commandCourse" placeholder="Course Name" />
+    <br><br>
+    <button onclick="executeCommand('enroll')">Enroll</button>
+    <button onclick="executeCommand('drop')">Drop</button>
+    <button onclick="executeCommand('submit')">Submit Assignment</button>
+    <div class="log" id="commandLog"></div>
+  </div>
+
+  <script>
+    // ---------- Observer Pattern ----------
+    let students = [];
+
+    function subscribeStudent() {
+      const name = document.getElementById('studentName').value;
+      if (name && !students.includes(name)) {
+        students.push(name);
+        log('notificationLog', `${name} subscribed for notifications.`);
+      }
+    }
+
+    function publishAssignment() {
+      const assignment = document.getElementById('assignment').value;
+      if (assignment) {
+        students.forEach(student => {
+          log('notificationLog', `Notification to ${student}: New assignment posted - ${assignment}`);
+        });
+      }
+    }
+
+    // ---------- Strategy Pattern ----------
+    function calculateGrade() {
+      const strategy = document.getElementById('gradingStrategy').value;
+      const score = parseInt(document.getElementById('scoreInput').value);
+      let grade = '';
+
+      if (isNaN(score)) {
+        log('gradeLog', 'Please enter a valid score.');
+        return;
+      }
+
+      switch (strategy) {
+        case 'percentage':
+          grade = `${score}%`;
+          break;
+        case 'cgpa':
+          grade = `CGPA: ${(score / 10).toFixed(2)}`;
+          break;
+        case 'passfail':
+          grade = score >= 50 ? 'Pass' : 'Fail';
+          break;
+      }
+
+      log('gradeLog', `Grade calculated using ${strategy} strategy: ${grade}`);
+    }
+
+    // ---------- Command Pattern ----------
+    function executeCommand(action) {
+      const student = document.getElementById('commandStudent').value;
+      const course = document.getElementById('commandCourse').value;
+
+      if (!student || !course) {
+        log('commandLog', 'Please enter both student and course.');
+        return;
+      }
+
+      let message = '';
+      switch (action) {
+        case 'enroll':
+          message = `${student} enrolled in ${course}`;
+          break;
+        case 'drop':
+          message = `${student} dropped ${course}`;
+          break;
+        case 'submit':
+          message = `${student} submitted assignment for ${course}`;
+          break;
+      }
+
+      log('commandLog', message);
+    }
+
+    // ---------- Utility ----------
+    function log(elementId, message) {
+      const el = document.getElementById(elementId);
+      el.textContent += message + '\n';
+      el.scrollTop = el.scrollHeight;
+    }
+  </script>
+
+</body>
+</html>
